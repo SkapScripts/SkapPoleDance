@@ -82,27 +82,34 @@ function CheckJobAndOpenMenu(pole)
     QBCore.Functions.Notify("You don't have access to this.", "error", 3000)
 end
 
-function OpenDanceMenu(coords, heading)
-    local danceOptions = {}
-
-    for _, dance in ipairs(Config.Dances) do
-        table.insert(danceOptions, {
-            header = dance.label,
-            txt = "",
-            params = {
-                event = "SkapPoleDance:StartDance",
-                args = {
-                    animDict = dance.animDict,
-                    anim = dance.anim,
-                    coords = coords,
-                    heading = heading
-                }
-            }
+    function OpenDanceMenu(coords, heading)
+        local danceOptions = {}
+    
+        for i, dance in ipairs(Config.Dances) do
+            table.insert(danceOptions, {
+                title = dance.label,
+                description = "", 
+                icon = "fas fa-music",
+                onSelect = function()
+                    TriggerEvent("SkapPoleDance:StartDance", {
+                        animDict = dance.animDict,
+                        anim = dance.anim,
+                        coords = coords,
+                        heading = heading
+                    })
+                end
+            })
+        end
+    
+        lib.registerContext({
+            id = 'dance_menu',
+            title = 'Dance Selection',
+            options = danceOptions
         })
+    
+        lib.showContext('dance_menu')
     end
-
-    exports['qb-menu']:openMenu(danceOptions)
-end
+    
 
 RegisterNetEvent("SkapPoleDance:StartDance", function(data)
     local ped = PlayerPedId()
